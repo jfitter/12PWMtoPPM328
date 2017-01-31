@@ -5,7 +5,8 @@
  *  \version    1.0
  *  \date       January 2017
  *  \copyright  Copyright (C) 2017 J. F. Fitter <jfitter@eagleairaust.com.au>
- *  \details    Firmware for Arduino Nano v3 to measure 12 PWM R/C servo signals and output
+ *  \par        Details
+ *              Firmware for Arduino Nano v3 to measure 12 PWM R/C servo signals and output
  *              a PPM pulse train in addition to serial packets. 
  *  \par
  *              This firmware is based on ArduPPM Version v0.9.87 from 
@@ -22,7 +23,6 @@
  *              See FAILHOLD and FAILCENTRE in .h file
  *  \par
  *  \par        License
- *  \par
  *              This program is free software; you can redistribute it and/or modify it under
  *              the terms of the GNU Lesser General Public License as published by the Free
  *              Software Foundation; either version 2.1 of the License, or (at your option)
@@ -44,8 +44,8 @@
 #include "12PWMtoPPM328.h"
 
 /***********************************************************************************************//**
- PROGRAM SETUP
-*//************************************************************************************************/
+ * PROGRAM SETUP
+ *//***********************************************************************************************/
 
 void setup() {
     
@@ -66,8 +66,8 @@ void setup() {
 }
 
 /***********************************************************************************************//**
- PROGRAM MAIN LOOP
-*//************************************************************************************************/
+ * PROGRAM MAIN LOOP
+ *//***********************************************************************************************/
 
 void loop() {
     static uint8_t servo_ch = 1;
@@ -85,9 +85,9 @@ void loop() {
 }
 
 /***********************************************************************************************//**
- PPM READING HELPER - interrupt safe and non blocking function (servo_ch is 1 based)
- \param[in]  servo_ch  Servo channel (1..12)                             
-*//************************************************************************************************/
+ * PPM READING HELPER - interrupt safe and non blocking function (servo_ch is 1 based)
+ * \param[in] servo_ch  Servo channel (1..12)                             
+ *//***********************************************************************************************/
 
 uint16_t ppm_read_channel( uint8_t servo_ch ) {
 
@@ -103,10 +103,11 @@ uint16_t ppm_read_channel( uint8_t servo_ch ) {
 }
 
 /***********************************************************************************************//**
- PPM GENERATOR START - TOGGLE ON COMPARE INTERRUPT ENABLE
- This starts OUTGOING PPM stream on PPM_PORT (PORTB, Arduino D8-D13) at 
- PPM_OUT_PIN (PB2, arduino pin D10) 
-*//************************************************************************************************/
+ *  PPM GENERATOR START - TOGGLE ON COMPARE INTERRUPT ENABLE
+ *  \par
+ *  This starts OUTGOING PPM stream on PPM_PORT (PORTB, Arduino D8-D13) at 
+ *  PPM_OUT_PIN (PB2, arduino pin D10) 
+ *//***********************************************************************************************/
 
 void ppm_start(void) {
 
@@ -127,8 +128,8 @@ void ppm_start(void) {
 }
 
 /***********************************************************************************************//**
- PPM GENERATOR STOP - TOGGLE ON COMPARE INTERRUPT DISABLE
-*//************************************************************************************************/
+ * PPM GENERATOR STOP - TOGGLE ON COMPARE INTERRUPT DISABLE
+ *//***********************************************************************************************/
 
 void ppm_stop(void) {
 
@@ -141,11 +142,12 @@ void ppm_stop(void) {
 }
 
 /***********************************************************************************************//**
- WATCHDOG INTERRUPT (interrupt only mode, no reset)
- If watchdog is triggered then enable missing signal flag and copy power on or failsafe 
- positions use failsafe values if PPM generator is active or if chip has been reset from
- a brown-out
-*//************************************************************************************************/
+ *  WATCHDOG INTERRUPT (interrupt only mode, no reset)
+ *  \par
+ *  If watchdog is triggered then enable missing signal flag and copy power on or failsafe 
+ *  positions use failsafe values if PPM generator is active or if chip has been reset from
+ *  a brown-out
+ *//***********************************************************************************************/
 
 ISR(WDT_vect) {
 
@@ -159,8 +161,8 @@ ISR(WDT_vect) {
 }
 
 /***********************************************************************************************//**
- SERVO/PPM INPUT - PIN CHANGE INTERRUPT, for pins D2..D7 and pins C0..C5
-*//************************************************************************************************/
+ * SERVO/PPM INPUT - PIN CHANGE INTERRUPT, for pins D2..D7 and pins C0..C5
+ *//***********************************************************************************************/
 
 ISR(PCINT2_vect) {
 
@@ -247,8 +249,8 @@ CHECK_PINS_DONE:                                        // All servo input pins 
 ISR(PCINT1_vect, ISR_ALIASOF(PCINT2_vect));
 
 /***********************************************************************************************//**
- PPM OUTPUT - TIMER1 COMPARE INTERRUPT
-*//************************************************************************************************/
+ * PPM OUTPUT - TIMER1 COMPARE INTERRUPT
+ *//***********************************************************************************************/
 
 ISR(TIMER1_COMPB_vect) {
 
@@ -258,8 +260,8 @@ ISR(TIMER1_COMPB_vect) {
 }
 
 /***********************************************************************************************//**
- PPM ENCODER INIT
-*//************************************************************************************************/
+ * PPM ENCODER INIT
+ *//***********************************************************************************************/
 
 void ppm_encoder_init(void) {
 
