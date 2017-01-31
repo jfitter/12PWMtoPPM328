@@ -1,44 +1,97 @@
 /***********************************************************************************************//**
- *  \brief      12 Channel PWM to 1 channel PPM converter for RC receivers - Source File.
- *  \file       12PWMtoPPM328.ino
- *  \author     John Fitter <jfitter@eagleairaust.com.au>
- *  \version    1.0
- *  \date       January 2017
- *  \copyright  Copyright (C) 2017 J. F. Fitter <jfitter@eagleairaust.com.au>
- *  \par        Details
+ * \brief       12 Channel PWM to 1 channel PPM converter for RC receivers - Source File.
+ * \file        12PWMtoPPM328.ino
+ * \author      John Fitter <jfitter@eagleairaust.com.au>
+ * \version     1.0
+ * \date        January 2017
+ * \copyright   Copyright (C) 2017 J. F. Fitter <jfitter@eagleairaust.com.au>
+ * \par         Details
  *              Firmware for Arduino Nano v3 to measure 12 PWM R/C servo signals and output
  *              a PPM pulse train in addition to serial packets. 
- *  \par
+ * \par         
  *              This firmware is based on ArduPPM Version v0.9.87 from 
  *              http://code.google.com/p/ardupilot-mega/source/browse/Tools/ArduPPM/
  *              and has been substantially modified to support only Atmel328 devices. It is 
  *              based on an idea from David/Buzz Sept 3rd 2012 (I am not responsible for the goto's)
- *  \par
+ * \par         
  *              Input:  Up to 12 PWM signals. PW = 800 to 2200uS, PRF = 50 to 300Hz
  *              Output: Standard PPM 12ch pulse train
  *                      ASCII Serial packets at 115200,n,8,1 [[PWuS ]...]crlf
- *  \par
+ * \par         
  *              Compile-time option to either "hold last good PPM value" or 
  *              "hold default value/s" in the case of no actual input signal for each channel.
  *              See FAILHOLD and FAILCENTRE in .h file
- *  \par
- *  \par        License
+ * \par         
+ * \par         License
  *              This program is free software; you can redistribute it and/or modify it under
  *              the terms of the GNU Lesser General Public License as published by the Free
  *              Software Foundation; either version 2.1 of the License, or (at your option)
  *              any later version.
- *  \par
+ * \par         
  *              This Program is distributed in the hope that it will be useful, but WITHOUT ANY
  *              WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *              PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details
  *              at http://www.gnu.org/copyleft/gpl.html
- *  \par
+ * \par         
  *              You should have received a copy of the GNU Lesser General Public License along
  *              with this library; if not, write to the Free Software Foundation, Inc.,
  *              51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- *
+ * \par         
+ * \par         USAGE DETAILS 
+ * \par         Purpose:
+ *                  A diagnostic tool for setting up flight controllers.\n
+ * \par         Start with:
+ *                  An Arduino Nano v3 with a Atmega328p chip on it and 16MHz clock.\n
+ *                  An IDE to program the chip with this code (Arduino, Visual Studio, etc).
+ * \par         How:?
+ *                  Use the Arduino IDE to program this firmware onto the Arduino chip.
+ * \par        
+ *                  Connect up to 12 RC PWM input signals so that the wires go to:
+ * \li                  red (red)      =>> 5v (see TIPS below)
+ * \li                  black (brown)  =>> GND or 0V pin on Arduino
+ * \li                  white (yellow) =>> PWM signal pins, these connect to D2..D7 and A0..A5
+ * \par        
+ *                  Connect the PPM output so that the wires go to:
+ * \li                  red (red)      =>> 5v
+ * \li                  black (brown)  =>> GND or 0V
+ * \li                  white (yellow) =>> D10 
+ * \par
+ *                  Connect USB to PC and run the 12 Channel RC Monitor application (Windows tm) 
+ * \par         Done! 
+ * \par         Why?
+ *              Some flight controller's setup software, eg. CleanFlight for CCD3, does not display 
+ *              its output in real time. The output data is displayed at the same rate as if it were
+ *              received over the telemetry link. For setting up the controller and experimenting 
+ *              with mixer settings it is convenient to have a fast responding servo signal monitor 
+ *              rather than having to connect real servos.
+ * \par         Tips:
+ *              Any channel that you don't connect a PWM input on, will emit a default value (which 
+ *              is 1500 for all channels except throttle, which is 1100). Disconnecting any channel 
+ *              after booting will cause the system to use the last-known-position of the input, 
+ *              until a good signal returns.
+ * \par
+ *              Generally the USB power is sufficient to power the R/C receiver. If powering the
+ *              receiver separately and monitoring the output via USB it is recommended to 
+ *              disconnect all of the power wires from the servo inputs, ie. allow the Arduino to be
+ *              powered only by USB power.
+ * \par
+ *              It is not a good idea to run the R/C receiver at more than 5V.
+ * \par
+ * \par         Legals:     
+ *              <b>*** WARNING - WARNING - WARNING ***</b>\n
+ *              DO NOT use this circuit in a real model\n
+ *              It is for bench testing only. Use in a model at your own risk.
+ * \par
+ *              Be familiar with local regulations relating to air safety and 
+ *              safety of persons on the ground.
+ * \par
+ *              Neither the code nor the hardware is redundant nor error resistant. The only 
+ *              concession is the watchdog timer which is set to 250mS. 
+ * \par
+ *              This is not a "fail-safe" unit and has no fail-safe functionality.
+ * 
  *//***********************************************************************************************/
-
+ 
 #include "Arduino.h"
 #include "printf.h"
 #include "12PWMtoPPM328.h"
